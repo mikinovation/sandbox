@@ -10,5 +10,5 @@ const selectedIndex = computed(() =>
 </script>
 
 <template>
-  <UTabs :items="items" :default-index="selected" />
+  <UTabs :items="items" :default-index="selectedIndex" />
 </template>
