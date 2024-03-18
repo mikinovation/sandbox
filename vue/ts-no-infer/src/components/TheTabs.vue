@@ -4,7 +4,7 @@ const props = defineProps<{
   selected: NoInfer<T>;
 }>();
 
-const selected = computed(() =>
+const selectedIndex = computed(() =>
   props.items.findIndex((item) => item.label === props.selected)
 );
 </script>
