@@ -1,11 +1,11 @@
 const texts = ["grape", "apple", "banana"];
 
-const getSortedTexts = (texts: string[]) => {
+function getSortedTexts(texts: string[]) {
   return texts.sort().join(", ");
-};
+}
 
 export default function Page() {
-  return <h1>App Router</h1>;
+  return <h1>{getSortedTexts(texts)}</h1>;
 }
 
 if (import.meta.vitest) {
