@@ -21,7 +21,7 @@ use std::{env, sync::Arc};
 use dotenv::dotenv;
 use hyper::header::CONTENT_TYPE;
 use sqlx::PgPool;
-use tower_http::cors::{Any, CorsLayer, Origin};
+use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
@@ -71,7 +71,7 @@ fn create_app<Todo: TodoRepository, Label: LabelRepository>(
         .layer(Extension(Arc::new(label_repository)))
         .layer(
             CorsLayer::new()
-                .allow_origin(Origin::exact("http://localhost:3001".parse().unwrap()))
+                .allow_origin("http://localhost:3001".parse().unwrap())
                 .allow_methods(Any)
                 .allow_headers(vec![CONTENT_TYPE]),
         )
@@ -114,7 +114,7 @@ mod test {
     }
 
     async fn res_to_todo(res: Response) -> TodoEntity {
-        let bytes = hyper::body::to_bytes(res.into_body()).await.unwrap();
+        let bytes = hyper::body::aggregate(res.into_body()).await.unwrap();
         let body: String = String::from_utf8(bytes.to_vec()).unwrap();
         let todo: TodoEntity = serde_json::from_str(&body)
             .expect(&format!("cannot convert Todo instance. body: {}", body));
