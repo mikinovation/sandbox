@@ -243,7 +243,7 @@ fn fold_entities(rows: Vec<TodoWithLabelFromRow>) -> Vec<TodoEntity> {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Validate)]
 pub struct CreateTodo {
-    #[validate(required(message = "Can not be empty"))]
+    #[validate(length(min = 1, message = "Can not be empty"))]
     #[validate(length(max = 100, message = "Over text length"))]
     text: String,
     labels: Vec<i32>,
@@ -251,7 +251,7 @@ pub struct CreateTodo {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Validate)]
 pub struct UpdateTodo {
-    #[validate(required(message = "Can not be empty"))]
+    #[validate(length(min = 1, message = "Can not be empty"))]
     #[validate(length(max = 100, message = "Over text length"))]
     text: Option<String>,
     completed: Option<bool>,
