@@ -1,5 +1,5 @@
 import { object, string, z } from "zod";
-import { tagSchema } from "@/entities/article/model";
+import { tagSchema } from "@/entities/tag/model";
 
 export const articleIdSchema = string().uuid();
 export type ArticleId = z.infer<typeof articleIdSchema>;
