@@ -5,12 +5,10 @@
         <NuxtLink class="navbar-brand" to="/">conduit</NuxtLink>
         <ul class="nav navbar-nav pull-xs-right">
           <li class="nav-item">
-            <NuxtLink class="nav-link active" a="test" to="/login"
-              >Sign in</NuxtLink
-            >
+            <NuxtLink class="nav-link active" to="/login">Sign in</NuxtLink>
           </li>
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/">Sign up</NuxtLink>
+            <NuxtLink class="nav-link" to="/register">Sign up</NuxtLink>
           </li>
         </ul>
       </div>
@@ -45,7 +43,7 @@ if (import.meta.vitest) {
         },
       },
     });
-    expect(wrapper.find(".navbar-brand").text()).toBe("conduit");
+    expect(wrapper.findComponent(RouterLinkStub).text()).toBe("conduit");
   });
 
   it("should render Sign in link", async () => {
@@ -57,8 +55,8 @@ if (import.meta.vitest) {
       },
     });
     const link = wrapper.findAll("header .nav-link").at(0);
-    expect(link.text()).toBe("Sign in");
-    expect(link.attributes().to).toBe("/login");
+    expect(link?.text()).toBe("Sign in");
+    expect(link?.findComponent(RouterLinkStub).props().to).toBe("/login");
   });
 
   it("should render Sign up link", async () => {
@@ -69,7 +67,9 @@ if (import.meta.vitest) {
         },
       },
     });
-    expect(wrapper.findAll("header .nav-link").at(1).text()).toBe("Sign up");
+    const link = wrapper.findAll("header .nav-link").at(1);
+    expect(link?.text()).toBe("Sign up");
+    expect(link?.findComponent(RouterLinkStub).props().to).toBe("/register");
   });
 
   it("should render current year in footer", async () => {
