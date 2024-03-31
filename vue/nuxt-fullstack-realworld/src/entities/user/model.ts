@@ -3,8 +3,8 @@ import { object, string, z } from "zod";
 export const userIdSchema = string().uuid();
 export type UserId = z.infer<typeof userIdSchema>;
 
-export const userNameSchema = string().min(1).max(255);
-export type UserName = z.infer<typeof userNameSchema>;
+export const usernameSchema = string().min(1).max(255);
+export type Username = z.infer<typeof usernameSchema>;
 
 export const emailSchema = string().email().min(1).max(255);
 export type Email = z.infer<typeof emailSchema>;
@@ -20,7 +20,7 @@ export type Image = z.infer<typeof imageSchema>;
 
 export const userSchema = object({
   id: userIdSchema,
-  userName: userNameSchema,
+  userName: usernameSchema,
   email: emailSchema,
   bio: bioSchema,
   image: imageSchema,
@@ -44,11 +44,11 @@ if (import.meta.vitest) {
 
   describe("userNameSchema", () => {
     it("accepts a valid name", () => {
-      expect(userNameSchema.safeParse("John Doe").success).toBe(true);
+      expect(usernameSchema.safeParse("John Doe").success).toBe(true);
     });
 
     it("rejects an empty name", () => {
-      expect(userNameSchema.safeParse("").success).toBe(false);
+      expect(usernameSchema.safeParse("").success).toBe(false);
     });
   });
 

@@ -8,9 +8,11 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "typecheck": "nuxi typecheck",
     "test": "vitest --passWithNoTests"
   },
   "dependencies": {
+    "date-fns": "^3.6.0",
     "nuxt": "^3.11.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",

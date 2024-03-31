@@ -1,5 +1,6 @@
 import { object, string, z } from "zod";
 import { tagSchema } from "@/entities/tag/model";
+import { userSchema } from "@/entities/user/model";
 
 export const articleIdSchema = string().uuid();
 export type ArticleId = z.infer<typeof articleIdSchema>;
@@ -23,9 +24,10 @@ export const articleSchema = object({
   description: descriptionSchema,
   body: bodySchema,
   tags: tagSchema.array(),
+  author: userSchema,
+  createdAt: string(),
 });
-
-export type Tag = z.infer<typeof tagSchema>;
+export type Article = z.infer<typeof articleSchema>;
 
 if (import.meta.vitest) {
   const { describe, it, expect } = import.meta.vitest;
@@ -93,6 +95,14 @@ if (import.meta.vitest) {
           description: "description",
           body: "body",
           tags: [{ id: "123e4567-e89b-12d3-a456-426614174000", name: "tag" }],
+          author: {
+            id: "123e4567-e89b-12d3-a456-426614174000",
+            username: "username",
+            email: "test@example.com",
+            bio: "bio",
+            image: "image",
+          },
+          createdAt: "2024-03-26T00:00:00.000Z",
         }).success
       ).toBe(true);
     });
@@ -106,6 +116,14 @@ if (import.meta.vitest) {
           description: "description",
           body: "body",
           tags: [{ id: "123e4567-e89b-12d3-a456-426614174000", name: "tag" }],
+          author: {
+            id: "123e4567-e89b-12d3-a456-426614174000",
+            username: "username",
+            email: "test@example.com",
+            bio: "bio",
+            image: "image",
+          },
+          createdAt: "2024-03-26T00:00:00.000Z",
         }).success
       ).toBe(false);
     });
