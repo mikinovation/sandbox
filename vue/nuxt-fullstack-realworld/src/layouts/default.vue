@@ -58,9 +58,7 @@ if (import.meta.vitest) {
     });
     const link = wrapper.findAll("header .nav-link").at(0);
     expect(link.text()).toBe("Sign in");
-    expect(link.findAll("header .nav-link").at(0).attributes().to).toBe(
-      "/login"
-    );
+    expect(link.attributes().to).toBe("/login");
   });
 
   it("should render Sign up link", async () => {
