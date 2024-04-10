@@ -1,39 +1,34 @@
+<script setup lang="ts">
+// TODO: Add constant title
+</script>
+
 <template>
-  <div class="home-page">
-    <div class="banner">
-      <div class="container">
-        <h1 class="logo-font">conduit</h1>
-        <p>A place to share your knowledge.</p>
-      </div>
+  <PageContainer title="Home">
+    <div
+      class="jumbotron w-full flex justify-center items-center text-center p-4 overflow-auto text-white bg-custom-green shadow-inner"
+    >
+      <TheContainer>
+        <h1
+          class="font-titillium text-6xl font-extrabold text-center text-shadow pb-4"
+        >
+          conduit
+        </h1>
+        <p class="font-thin text-xl pb-4">A place to share your knowledge.</p>
+      </TheContainer>
     </div>
-    <div class="container page">
-      <div class="row">
-        <div class="col-md-9">
-          <div class="feed-toggle">
-            <ul class="nav nav-pills outline-active">
-              <li class="nab-item">
-                <a class="link nav-link active" href="">Your Feed</a>
-              </li>
-              <li class="nab-item">
-                <a class="link nav-link" href="">Global Feed</a>
-              </li>
-              <li class="nab-item">
-                <a class="link nav-link active" href="">
-                  <i class="ion-pound" /> tag
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="sidebar">
-            <p>Popular Tags</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </PageContainer>
 </template>
+
+<style scoped>
+.text-shadow {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.jumbotron {
+  box-shadow: inset 0 8px 8px -8px rgba(0, 0, 0, 0.3),
+    inset 0 -8px 8px -8px rgba(0, 0, 0, 0.3);
+}
+</style>
 
 <script lang="ts">
 import IndexPage from "./index.vue";
