@@ -1,38 +1,97 @@
 import { Hono } from "hono";
+import { logger } from "hono/logger";
+import { zValidator } from "@hono/zod-validator";
+import { ZodSchema } from "zod";
+import { createArticleParamsSchema } from "./entities/article/model";
 
+/**
+ * Status Code
+ * @see {@link https://main--realworld-docs.netlify.app/docs/specs/backend-specs/error-handling}
+ */
+const STATUS_CODE = {
+  OK: 200,
+  CREATED: 201,
+  NO_CONTENT: 204,
+  UNAUTHORIZED: 401,
+  UNPROCESSABLE_ENTITY: 422,
+  NOT_FOUND: 404,
+  INTERNAL_SERVER_ERROR: 500,
+} as const;
+
+const validateJsonWith = (schema: ZodSchema) => {
+  return zValidator("json", schema, (result, c) => {
+    if (!result.success)
+      return c.json(result.error, STATUS_CODE.UNPROCESSABLE_ENTITY);
+    return result.data;
+  });
+};
+
+/**
+ * Endpoints
+ * @see {@link https://main--realworld-docs.netlify.app/docs/specs/backend-specs/endpoints}
+ */
 const app = new Hono().basePath("/api");
+
+// only use logger middleware in development and production
+if (!import.meta.vitest) {
+  app.use(logger());
+}
 
 app
   .get("/articles", (c) => {
-    return c.json({
-      articles: [
-        {
-          articles: [
-            {
-              slug: "string",
-              title: "string",
-              description: "string",
-              body: "string",
-              tagList: ["string"],
-              createdAt: "2024-04-12T13:28:33.205Z",
-              updatedAt: "2024-04-12T13:28:33.205Z",
-              favorited: true,
-              favoritesCount: 0,
-              author: {
-                username: "string",
-                bio: "string",
-                image: "string",
-                following: true,
+    return c.json(
+      {
+        articles: [
+          {
+            articles: [
+              {
+                slug: "string",
+                title: "string",
+                description: "string",
+                body: "string",
+                tagList: ["string"],
+                createdAt: "2024-04-12T13:28:33.205Z",
+                updatedAt: "2024-04-12T13:28:33.205Z",
+                favorited: true,
+                favoritesCount: 0,
+                author: {
+                  username: "string",
+                  bio: "string",
+                  image: "string",
+                  following: true,
+                },
               },
-            },
-          ],
-          articlesCount: 0,
-        },
-      ],
-    });
+            ],
+            articlesCount: 0,
+          },
+        ],
+      },
+      STATUS_CODE.OK
+    );
   })
-  .post("/articles", (c) => {
-    return c.text("TODO");
+  .post("/articles", validateJsonWith(createArticleParamsSchema), (c) => {
+    return c.json(
+      {
+        article: {
+          slug: "string",
+          title: "string",
+          description: "string",
+          body: "string",
+          tagList: ["string"],
+          createdAt: "2024-04-13T00:27:28.169Z",
+          updatedAt: "2024-04-13T00:27:28.169Z",
+          favorited: true,
+          favoritesCount: 0,
+          author: {
+            username: "string",
+            bio: "string",
+            image: "string",
+            following: true,
+          },
+        },
+      },
+      STATUS_CODE.CREATED
+    );
   })
   .get("/articles/feed", (c) => {
     return c.text("TODO");
@@ -127,10 +186,39 @@ if (import.meta.vitest) {
   describe("POST /api/articles", () => {
     it("should create an article", async () => {
       const res = await app.request(
-        new Request("http://localhost/api/articles", { method: "POST" })
+        new Request("http://localhost/api/articles", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            article: {
+              title: "string",
+              description: "string",
+              body: "string",
+              tagList: ["string"],
+            },
+          }),
+        })
       );
-      expect(res.status).toBe(200);
-      expect(await res.text()).toBe("TODO");
+      expect(res.status).toBe(201);
+      expect(await res.json()).toEqual({
+        article: {
+          slug: "string",
+          title: "string",
+          description: "string",
+          body: "string",
+          tagList: ["string"],
+          createdAt: "2024-04-13T00:27:28.169Z",
+          updatedAt: "2024-04-13T00:27:28.169Z",
+          favorited: true,
+          favoritesCount: 0,
+          author: {
+            username: "string",
+            bio: "string",
+            image: "string",
+            following: true,
+          },
+        },
+      });
     });
   });
 
