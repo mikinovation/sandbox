@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:16.2-alpine3.19
+    env_file:
+      - ./.env
+    environment:
+      - TZ=Asia/Tokyo
+      - POSTGRES_DB=$DB_NAME
+      - POSTGRES_USER=$DB_USER
+      - POSTGRES_PASSWORD=$DB_PASS
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
