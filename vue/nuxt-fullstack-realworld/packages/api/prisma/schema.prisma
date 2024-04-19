@@ -17,4 +17,56 @@ model User {
   id       String @id @default(uuid())
   email    String @unique
   username String @unique
+  password String
+  image    String?
+  bio      String?
+  articles Article[] @relation("author")
+  followsUsers User[] @relation("user_follows")
+  followedByUsers User[] @relation("user_follows")
+  favoriteArticles Article[] @relation("favorite_articles")
+  comments Comment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Article {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  description String
+  body        String
+  authorId    String
+  author      User     @relation("author", fields: [authorId], references: [id])
+  favoritedBy User[] @relation("favorite_articles")
+  comments    Comment[]
+  tagList     Tags[] @relation("tags")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Tags {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ArticleTags {
+  articleId String
+  tagId     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  article   Article @relation(fields: [articleId], references: [id])
+  tag       Tags    @relation(fields: [tagId], references: [id])
+}
+
+model Comment {
+  id        String @id @default(uuid())
+  body      String
+  authorId  String
+  articleId String
+  author    User   @relation(fields: [authorId], references: [id])
+  article   Article @relation(fields: [articleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

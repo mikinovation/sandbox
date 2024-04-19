@@ -2,7 +2,7 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "test": "vitest",
-    "prisma:studio": "prisma studio",
+    "db:studio": "prisma studio",
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
@@ -13,6 +13,9 @@
     "@cloudflare/workers-types": "^4.20240403.0",
     "@hono/zod-validator": "^0.2.1",
     "@prisma/client": "5.12.1",
+    "drizzle-kit": "^0.20.14",
+    "drizzle-orm": "^0.30.8",
+    "postgres": "^3.4.4",
     "prisma": "^5.12.1",
     "vite": "^5.2.8",
     "vitest": "^1.5.0",
