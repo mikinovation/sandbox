@@ -2,11 +2,14 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "test": "vitest",
-    "db:studio": "prisma studio",
+    "db:studio": "drizzle-kit studio --config=./db/drizzle.config.ts",
+    "db:generate": "drizzle-kit generate:pg --config=./db/drizzle.config.ts",
+    "db:push": "drizzle-kit push:pg --config=./db/drizzle.config.ts",
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
     "hono": "^4.2.3",
+    "pg": "^8.11.5",
     "zod": "^3.22.4"
   },
   "devDependencies": {

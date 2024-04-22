@@ -37,6 +37,48 @@ export const articles = pgTable("articles", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   body: text("body").notNull(),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => users.id),
+  createdAt: createdAtSchema,
+  updatedAt: updatedAtSchema,
+});
+
+export const tags = pgTable("tags", {
+  id: idSchema,
+  name: text("name").unique().notNull(),
+  createdAt: createdAtSchema,
+  updatedAt: updatedAtSchema,
+});
+
+export const articleTags = pgTable("article_tags", {
+  id: idSchema,
+  articleId: uuid("article_id")
+    .notNull()
+    .references(() => articles.id),
+  tagId: uuid("tag_id")
+    .notNull()
+    .references(() => tags.id),
+  createdAt: createdAtSchema,
+  updatedAt: updatedAtSchema,
+});
+
+export const favorites = pgTable("favorites", {
+  id: idSchema,
+  userId: uuid("user_id"),
+  articleId: uuid("article_id"),
+  createdAt: createdAtSchema,
+  updatedAt: updatedAtSchema,
+});
+
+export const comments = pgTable("comments", {
+  id: idSchema,
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id),
+  articleId: uuid("article_id")
+    .notNull()
+    .references(() => articles.id),
   createdAt: createdAtSchema,
   updatedAt: updatedAtSchema,
 });
