@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "wrangler dev src/index.ts",
+    "dev": "wrangler dev src/index.ts --host 0.0.0.0",
     "test": "vitest",
     "db:studio": "drizzle-kit studio --config=./db/drizzle.config.ts",
     "db:generate": "drizzle-kit generate:pg --config=./db/drizzle.config.ts",

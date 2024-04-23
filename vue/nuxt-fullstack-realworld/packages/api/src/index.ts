@@ -3,6 +3,15 @@ import { logger } from "hono/logger";
 import { zValidator } from "@hono/zod-validator";
 import { ZodSchema } from "zod";
 import { createArticleParamsSchema } from "./entities/article/model";
+import {
+  userSchema,
+  loginInputSchema,
+  registerationInputSchema,
+  updateUserInputSchema,
+} from "./entities/user/model";
+import { sign } from "hono/jwt";
+
+const SECRET = "MY_SECRET";
 
 /**
  * Status Code
@@ -133,16 +142,66 @@ app
     return c.text("TODO");
   })
   .get("/user", (c) => {
-    return c.text("TODO");
+    const body = c.get("jwtPayload");
+    const user = {
+      email: body.email,
+      username: "string",
+      bio: "string",
+      image: "string",
+    };
+
+    return c.json(userSchema.parse(user), STATUS_CODE.OK);
   })
-  .put("/user", (c) => {
-    return c.text("TODO");
+  .put("/user", validateJsonWith(updateUserInputSchema), (c) => {
+    const { user: body } = c.req.valid("json");
+    const { email } = c.get("jwtPayload");
+    const user = {
+      email,
+      username: body.username,
+      bio: body.bio,
+      image: body.image,
+    };
+
+    return c.json(userSchema.parse(user), STATUS_CODE.OK);
   })
-  .post("/users", (c) => {
-    return c.text("TODO");
+  .post("/users", validateJsonWith(registerationInputSchema), async (c) => {
+    const { user: body } = c.req.valid("json");
+
+    const existedUser = null;
+
+    if (existedUser) {
+      return c.json("user registered", STATUS_CODE.UNPROCESSABLE_ENTITY);
+    }
+
+    const user = {
+      email: body.email,
+      username: body.username,
+      bio: "string",
+      image: "string",
+    };
+
+    const token = await sign(user, SECRET);
+
+    return c.json(userSchema.parse({ ...user, token }), STATUS_CODE.CREATED);
   })
-  .post("/users/login", (c) => {
-    return c.text("TODO");
+  .post("/users/login", validateJsonWith(loginInputSchema), async (c) => {
+    const { user: body } = c.req.valid("json");
+
+    const user = {
+      id: "string",
+      email: body.email,
+      username: body.username,
+      bio: "string",
+      image: "string",
+    };
+
+    if (!user) {
+      return c.json("user not authenticated", STATUS_CODE.UNAUTHORIZED);
+    }
+
+    const token = await sign(user, SECRET);
+
+    return c.json(userSchema.parse({ ...user, token }), STATUS_CODE.OK);
   });
 
 export default app;
