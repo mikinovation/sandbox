@@ -2,7 +2,14 @@ import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { zValidator } from "@hono/zod-validator";
 import { ZodSchema } from "zod";
-import { createArticleParamsSchema } from "./entities/article/model";
+import {
+  createArticleInputSchema,
+  getArticleParamSchema,
+  getArticleResponseSchmea,
+  getArticlesQuerySchema,
+  getArticlesResponseSchema,
+  getFeedQuerySchema,
+} from "./entities/article/model";
 import {
   userSchema,
   loginInputSchema,
@@ -27,6 +34,22 @@ const STATUS_CODE = {
   INTERNAL_SERVER_ERROR: 500,
 } as const;
 
+const validateParamWith = (schema: ZodSchema) => {
+  return zValidator("param", schema, (result, c) => {
+    if (!result.success)
+      return c.json(result.error, STATUS_CODE.UNPROCESSABLE_ENTITY);
+    return result.data;
+  });
+};
+
+const validateQueryWith = (schema: ZodSchema) => {
+  return zValidator("query", schema, (result, c) => {
+    if (!result.success)
+      return c.json(result.error, STATUS_CODE.UNPROCESSABLE_ENTITY);
+    return result.data;
+  });
+};
+
 const validateJsonWith = (schema: ZodSchema) => {
   return zValidator("json", schema, (result, c) => {
     if (!result.success)
@@ -47,66 +70,124 @@ if (!import.meta.vitest) {
 }
 
 app
-  .get("/articles", (c) => {
-    return c.json(
+  .get("/articles", validateQueryWith(getArticlesQuerySchema), (c) => {
+    const { tag, author, favorited, limit, offset } = c.req.valid("query");
+
+    console.log(tag, author, favorited, limit, offset);
+
+    // TODO: get articles
+    const articles = [
       {
-        articles: [
-          {
-            articles: [
-              {
-                slug: "string",
-                title: "string",
-                description: "string",
-                body: "string",
-                tagList: ["string"],
-                createdAt: "2024-04-12T13:28:33.205Z",
-                updatedAt: "2024-04-12T13:28:33.205Z",
-                favorited: true,
-                favoritesCount: 0,
-                author: {
-                  username: "string",
-                  bio: "string",
-                  image: "string",
-                  following: true,
-                },
-              },
-            ],
-            articlesCount: 0,
-          },
-        ],
+        slug: "string",
+        title: "string",
+        description: "string",
+        body: "string",
+        tagList: ["string"],
+        createdAt: "2024-04-12T13:28:33.205Z",
+        updatedAt: "2024-04-12T13:28:33.205Z",
+        favorited: true,
+        favoritesCount: 0,
+        author: {
+          username: "string",
+          bio: "string",
+          image: "string",
+          following: true,
+        },
       },
+    ];
+    const articlesCount = 1;
+
+    return c.json(
+      getArticlesResponseSchema.parse({ articles, articlesCount }),
       STATUS_CODE.OK
     );
   })
-  .post("/articles", validateJsonWith(createArticleParamsSchema), (c) => {
-    return c.json(
+  .post("/articles", validateJsonWith(createArticleInputSchema), (c) => {
+    const { article: body } = c.req.valid("json");
+
+    const existedSlug = null;
+
+    if (existedSlug)
+      return c.json("slug existed", STATUS_CODE.UNPROCESSABLE_ENTITY);
+
+    // transaction start
+    // TODO: create article
+    const article = {
+      slug: body.slug,
+      title: body.title,
+      description: body.description,
+      body: body.body,
+      tagList: body.tagList,
+      favorited: true,
+      favoritesCount: 0,
+      author: {
+        username: "string",
+        bio: "string",
+        image: "string",
+        following: true,
+      },
+      createdAt: "2024-04-13T00:27:28.169Z",
+      updatedAt: "2024-04-13T00:27:28.169Z",
+    };
+
+    return c.json(getArticleResponseSchmea.parse(article), STATUS_CODE.CREATED);
+  })
+  .get("/articles/feed", validateQueryWith(getFeedQuerySchema), (c) => {
+    const { limit, offset } = c.req.valid("query");
+
+    console.log(limit, offset);
+
+    // TODO: get articles
+    const articles = [
       {
-        article: {
-          slug: "string",
-          title: "string",
-          description: "string",
-          body: "string",
-          tagList: ["string"],
-          createdAt: "2024-04-13T00:27:28.169Z",
-          updatedAt: "2024-04-13T00:27:28.169Z",
-          favorited: true,
-          favoritesCount: 0,
-          author: {
-            username: "string",
-            bio: "string",
-            image: "string",
-            following: true,
-          },
+        slug: "string",
+        title: "string",
+        description: "string",
+        body: "string",
+        tagList: ["string"],
+        createdAt: "2024-04-12T13:28:33.205Z",
+        updatedAt: "2024-04-12T13:28:33.205Z",
+        favorited: true,
+        favoritesCount: 0,
+        author: {
+          username: "string",
+          bio: "string",
+          image: "string",
+          following: true,
         },
       },
-      STATUS_CODE.CREATED
+    ];
+    const articlesCount = 1;
+
+    return c.json(
+      getArticlesResponseSchema.parse({ articles, articlesCount }),
+      STATUS_CODE.OK
     );
   })
-  .get("/articles/feed", (c) => {
-    return c.text("TODO");
-  })
-  .get("/articles/:slug", (c) => {
-    return c.text("TODO");
+  .get("/articles/:slug", validateParamWith(getArticleParamSchema), (c) => {
+    const { slug } = c.req.valid("param");
+
+    const article = {
+      slug,
+      title: "string",
+      description: "string",
+      body: "string",
+      tagList: ["string"],
+      favorited: true,
+      favoritesCount: 0,
+      author: {
+        username: "string",
+        bio: "string",
+        image: "string",
+        following: true,
+      },
+      createdAt: "2024-04-12T13:28:33.205Z",
+      updatedAt: "2024-04-12T13:28:33.205Z",
+    };
+
+    if (!article) return c.json("article not found", STATUS_CODE.NOT_FOUND);
+
+    return c.json(getArticleResponseSchmea.parse(article), STATUS_CODE.OK);
   })
   .put("/articles/:slug", (c) => {
     return c.text("TODO");

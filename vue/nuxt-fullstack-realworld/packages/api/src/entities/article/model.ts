@@ -28,7 +28,24 @@ const updatedAtSchema = string().datetime();
 
 const articlesCountSchema = number().int().nonnegative();
 
-export const createArticleParamsSchema = object({
+export const getArticleParamSchema = object({
+  slug: string(),
+});
+
+export const getArticlesQuerySchema = object({
+  tag: string(),
+  author: string(),
+  favorited: string(),
+  limit: number().int().nonnegative(),
+  offset: number().int().nonnegative(),
+}).partial();
+
+export const getFeedQuerySchema = object({
+  limit: number().int().nonnegative(),
+  offset: number().int().nonnegative(),
+}).partial();
+
+export const createArticleInputSchema = object({
   article: object({
     title: titleSchema,
     description: descriptionSchema,
@@ -37,7 +54,7 @@ export const createArticleParamsSchema = object({
   }),
 });
 
-export const getArticleResponseSchema = object({
+export const getArticleResponseSchmea = object({
   article: object({
     slug: slugSchema,
     title: titleSchema,
@@ -65,7 +82,7 @@ export const getArticlesResponseSchema = object({
     createdAt: createdAtSchema,
     updatedAt: updatedAtSchema,
   }).array(),
-  articlesCount: favoritesCountSchema,
+  articlesCount: articlesCountSchema,
 });
 
 if (import.meta.vitest) {
