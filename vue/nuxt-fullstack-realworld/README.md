@@ -15,6 +15,4 @@ pnpm test
 
 ## TODO
 
-- [ ] setup docker container
-- [ ] setup migration
 - [ ] setup repositories test
